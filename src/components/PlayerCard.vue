@@ -7,7 +7,7 @@
 
 <script>
 export default {
-    name: 'Card',
+    name: 'PlayerCard',
     props: ['index', 'num'],   
     data() {
         return {
@@ -29,7 +29,6 @@ export default {
     /* margin:0px auto; */
     width: 20px;
     height: 65px;
-    
     display: inline-block;
 }
 .selected {

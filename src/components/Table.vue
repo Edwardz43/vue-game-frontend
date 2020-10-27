@@ -1,8 +1,7 @@
 <template>
     <div class="table">
-        <Seat :cardList=cardList[0] />
         <PlayGround/>
-        <Seat :cardList=cardList[1] />
+        <Seat :cardList=cardList[0] />
     </div>
 </template>
 
@@ -18,6 +17,7 @@ export default {
     },
     beforeCreate() {
         this.cardList = [];
+        this.selectedList = [];
         let tmpList = [];
         for (let i = 0; i < 51; i++) {
             tmpList[i] = {index: i, num: Math.floor(Math.random() * 51)};

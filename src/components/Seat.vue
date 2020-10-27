@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import Card from "./Card.vue";
+import Card from "./PlayerCard.vue";
 
 export default {
     name: 'Seat',
@@ -54,5 +54,8 @@ export default {
 <style>
 .seat {
     text-align:center;
+    position: relative;
+    height: 120px;
+    top: 5%;
 }
 </style>
