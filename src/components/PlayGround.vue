@@ -1,39 +1,24 @@
 <template>
     <div class="pg" :style="{ backgroundImage: `url(${backgroundImage})` }">
         <div class="current_cards">
-            <Card v-for="card in privateList" :key=card :num=card />
+            <Card v-for="card in this.$store.state.selectedList" :key=card.index :num=card.num />
         </div>
     </div>
 </template>
 
 <script>
 import Card from "./NormalCard.vue";
-
+import store from "../store"
 
 export default {
     name: 'PlayGround',
+    store,
     components: {
         Card
     },
     data() {
         return {
-            privateList: this.rndList(),
             backgroundImage: require('../assets/table.png')
-        }
-    },
-    methods: {
-        rndList() {
-            let num = Math.floor(Math.random() * 13 + 1);
-            let res = [];
-            while (res.length < num) {
-                let r = Math.floor(Math.random() * 51 + 1);
-                if (res.indexOf(r) < 0) {
-                    res.push(r);
-                    console.log(res)
-                }
-            }
-            res.sort((a, b) => a - b ? -1 : 1);
-            return res;
         }
     }
 }
