@@ -6,18 +6,15 @@
 </template>
 
 <script>
+import store from "../store"
+
 export default {
     name: 'PlayerCard',
-    props: ['index', 'num'],   
-    data() {
-        return {
-            isSelected: false,
-        }
-    },
+    store,
+    props: ['index', 'num', 'isSelected'],   
     methods: {
         click() {            
-            this.isSelected = !this.isSelected;
-            // console.log(this.index);
+            this.$store.commit('selected', this.index);
             this.$emit("add", { index: this.index });
         }
     },
@@ -26,14 +23,12 @@ export default {
 
 <style>
 .card {
-    /* margin:0px auto; */
-    width: 20px;
-    height: 65px;
+    width: 56px;
+    height: 70px;
     display: inline-block;
 }
 .selected {
     position: relative;
-    /* border: 1px solid rgb(14, 201, 14); */
-    top: 20%;
+    top: -30%;
 }
 </style>

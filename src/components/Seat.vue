@@ -1,11 +1,17 @@
 <template>
     <div class="seat">
-        <div>
-            {{ "Seat" }}
-            <button @click="play()" :disabled="disabled" >Play</button>
+        <div class="seat-label">
+            <button class="player_btn" :class="{dis: disabled}" @click="play()" :disabled="disabled" >Play</button>
+            <button class="player_btn" :class="{dis: disabled}" @click="clear()" :disabled="disabled" >Clear</button>
         </div>
         <div class="stack">
-            <Card v-for="card in this.$store.state.cardList[0]" :key=card.index :index=card.index :num=card.num @add="add" card_prop.sync="card" />
+            <Card v-for="card in cardList[0]" 
+                :key=card.index 
+                :index=card.index 
+                :num=card.num
+                :isSelected=card.isSelected
+                @add="add" 
+            />
         </div>
         
     </div>
@@ -13,15 +19,14 @@
 
 <script>
 import Card from "./PlayerCard.vue";
-import store from "../store"
+import { mapState } from "vuex";
 
 export default {
     name: 'Seat',
-    store,
+    computed: mapState(['cardList']),
     data() {
         return {
-            selectedList: [],
-            // privateList: [],
+            selectedList: [],            
             disabled: true,
         }
     },
@@ -30,22 +35,24 @@ export default {
     },
     methods: {
         play() {
-            let temp = this.$store.state.cardList[0].filter(card => this.selectedList.indexOf(card.index) > -1);
-            // console.log('temp', temp);
+            let temp = this.cardList[0].filter(card => this.selectedList.indexOf(card.index) > -1);
             this.$store.commit('delete', this.selectedList);
-            // this.$forceUpdate();
             this.$store.commit('replace', temp);
             this.selectedList = [];
             this.disabled = true;
         },
         add({index}) {
-            // console.log('add => index : ', index);
             if (this.selectedList.indexOf(index) > -1) {
                 this.selectedList.splice(this.selectedList.indexOf(index), 1);
             } else {
                 this.selectedList.push(index);
             }
             this.disabled = this.selectedList.length === 0 || this.$store.state.cardList[0].length === 0;
+        },
+        clear() {
+            this.selectedList = [];
+            this.$store.commit('clear');
+            this.disabled = true;
         }
     }
 }
@@ -57,5 +64,28 @@ export default {
     position: relative;
     height: 120px;
     top: 5%;
+}
+
+.seat-label{
+    width: 20%;
+    height: 20%;
+    display: inline-block;
+}
+
+.player_btn {
+    height: 90%;
+    width: 45%;
+    border-radius: 2rem;
+    color: rgba(183, 58, 233, 0.788);
+    background: chartreuse;
+}
+
+.dis {
+    background: rgb(56, 55, 56);
+    color: rgba(221, 211, 211, 0.788);
+}
+
+.stack {
+    margin-top: 2%;
 }
 </style>

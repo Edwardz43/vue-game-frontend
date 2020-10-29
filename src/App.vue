@@ -20,8 +20,9 @@ html {
 
 body {
   height: 95%;
-  width: 95%;
+  width: 98%;
   display: flex;
+  margin: 1% 1%;
 }
 
 #app {
