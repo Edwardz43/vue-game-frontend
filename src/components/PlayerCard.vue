@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="pocker">
         <img alt="Card" class="static" :class="{ selected: isSelected }"
          @click="click()" :src='`${ require("../assets/pocker/" + num + ".jpg")}`'>
     </div>
@@ -7,7 +7,6 @@
 
 <script>
 import store from "../store"
-
 export default {
     name: 'PlayerCard',
     store,
@@ -22,7 +21,7 @@ export default {
 </script>
 
 <style>
-.card {
+.pocker {
     width: 56px;
     height: 70px;
     display: inline-block;

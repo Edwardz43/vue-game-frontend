@@ -1,19 +1,20 @@
 <template>
     <div class="seat">
-        <div class="seat-label">
+        <div class="seat-label" v-if="myTurn">
             <button class="player_btn" :class="{dis: disabled}" @click="play()" :disabled="disabled" >Play</button>
+            <button class="player_btn" :class="{dis: myTurn && isLeader}" @click="pass()" :disabled="myTurn && isLeader" >Pass</button>
+        </div>
+        <div class="seat-label">
             <button class="player_btn" :class="{dis: disabled}" @click="clear()" :disabled="disabled" >Clear</button>
         </div>
-        <div class="stack">
-            <Card v-for="card in cardList[0]" 
+        <div class="stack" :class="{myTurn: myTurn}">
+            <Card v-for="card in cardList"
                 :key=card.index 
                 :index=card.index 
                 :num=card.num
                 :isSelected=card.isSelected
-                @add="add" 
-            />
+                @add="add" />
         </div>
-        
     </div>
 </template>
 
@@ -23,11 +24,11 @@ import { mapState } from "vuex";
 
 export default {
     name: 'Seat',
-    computed: mapState(['cardList']),
+    computed: mapState(['cardList', 'myTurn', 'isLeader', 'selectedIndexList']),
     data() {
         return {
-            selectedList: [],            
             disabled: true,
+            selectedList: [],                        
         }
     },
     components: {
@@ -35,24 +36,30 @@ export default {
     },
     methods: {
         play() {
-            let temp = this.cardList[0].filter(card => this.selectedList.indexOf(card.index) > -1);
-            this.$store.commit('delete', this.selectedList);
-            this.$store.commit('replace', temp);
-            this.selectedList = [];
+            console.log('this.selectedIndexList', this.selectedIndexList);
+            this.$emit('play', this.selectedIndexList);
+            this.$store.commit('clearIndexList');
+            this.disabled = true;
+        },
+        pass() {
+            this.$emit('pass');
+            this.$store.commit('clearIndexList');
             this.disabled = true;
         },
         add({index}) {
-            if (this.selectedList.indexOf(index) > -1) {
-                this.selectedList.splice(this.selectedList.indexOf(index), 1);
+            if (this.selectedIndexList.indexOf(index) > -1) {
+                // this.selectedList.splice(this.selectedList.indexOf(index), 1);
+                this.$store.commit('removeIndex', index);
             } else {
-                this.selectedList.push(index);
+                this.$store.commit('add', index);
             }
-            this.disabled = this.selectedList.length === 0 || this.$store.state.cardList[0].length === 0;
+            this.disabled = this.selectedIndexList.length === 0 || this.$store.state.cardList[0].length === 0;
+            // this.$emit('disable', disabled);
         },
         clear() {
-            this.selectedList = [];
+            this.$store.commit('clearIndexList');
             this.$store.commit('clear');
-            this.disabled = true;
+            // this.$emit('disable', true);
         }
     }
 }
@@ -73,7 +80,7 @@ export default {
 }
 
 .player_btn {
-    height: 90%;
+    height: 100%;
     width: 45%;
     border-radius: 2rem;
     color: rgba(183, 58, 233, 0.788);
@@ -87,5 +94,21 @@ export default {
 
 .stack {
     margin-top: 2%;
+    height: 75%;
+}
+
+.myTurn {
+    /* background: lightyellow; */
+    animation-name: shine;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes shine {
+  0%   {background-color: red;}
+  40%  {background-color: yellow;}
+  60%  {background-color: blue;}
+  80% {background-color: green;}
+  100%   {background-color: red;}
 }
 </style>

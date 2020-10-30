@@ -1,6 +1,6 @@
 <template>
     <div class="n_card">
-        <img alt="Card" :src='`${ require("../assets/pocker/" + num + ".jpg")}`'>
+        <img alt="Card" class="card_img" :src='`${ require("../assets/pocker/" + num + ".jpg")}`'>
     </div>
 </template>
 
@@ -15,5 +15,9 @@ export default {
 .n_card {
     display: inline-block;
     margin: 0 -2% 0 -2%;
+}
+.card_img {
+    width: 100px;
+    height: 130px;
 }
 </style>
