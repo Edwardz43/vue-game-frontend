@@ -1,71 +1,87 @@
 <template>
-    <div class="table" :style="{ backgroundImage: `url(${backgroundImage})` }">
-        <div>
-            <button v-if="!inGame" @click="conn()" >Connect</button>
-        </div>
-        <PlayGround v-if="inGame"/>
-        <Seat v-if="inGame" :cardList="cardList" @play="play" @pass="pass"/>
+    <div>
+        <button v-if="!inGame" :disabled="connecting" @click="conn()">Connect</button>
+    </div>
+    <div class="table" :style="{ backgroundImage: `url(${backgroundImage})`}" v-if="inGame">      
+        <RoundInfo :rid="rid" />
+        <PlayGround/>
+        <Seat :cardList="cardList" @play="play" @pass="pass" />
     </div>
 </template>
 
 <script>
+import RoundInfo from "./RoundInfo.vue";
 import PlayGround from "./PlayGround.vue";
 import Seat from "./Seat.vue";
 import { mapState } from "vuex";
 
 export default {
-    name: 'Table',
-    computed: mapState(['cardList', 'currentCard']),
-    components : {
+    name: "Table",
+    computed: mapState(["cardList", "currentCard"]),
+    components: {
+        RoundInfo,
         PlayGround,
         Seat,
     },
-    data () {
+    data() {
         return {
             pid: 0,
+            rid: 0,
             mySeat: 0,
+            seatMap: {},
             inGame: false,
-            playersHandCardCount: {},
+            connecting: false,
             cardsMap: {},
-            usedCards: [], 
-            backgroundImage: require('../assets/table.png')
-        }
+            usedCards: [],
+            backgroundImage: require("../assets/table.png"),
+        };
     },
     methods: {
         conn() {
-            fetch('http://localhost:55550/conn')
-            .then(resp => resp.json())
-            .then(myJson => {
-                console.log(myJson);
-                this.pid = myJson.pid;
-                this.ws = new WebSocket('ws://localhost:55550');
+            this.connecting = true;
+            fetch("http://localhost:55550/conn")
+                .then((resp) => resp.json())
+                .catch(error => {
+                    console.log(error);
+                    alert('Connect failed, pls try again later !')
+                    this.connecting = false;                    
+                })
+                .then((myJson) => {
+                    console.log(myJson);
+                    if(!myJson) {
+                        console.log('parse failed');
+                        return;
+                    }
+                    this.pid = myJson.pid;
+                    this.ws = new WebSocket("ws://localhost:55550");
 
-                this.ws.onopen = () => {
-                    console.log('open connection');
-                    // connBtn.setAttribute('disabled', '');
-                    this.start();
-                }
+                    this.ws.onopen = () => {
+                        // console.log('open connection');
+                        this.start();
+                    };
 
-                this.ws.onclose = () => {
-                    console.log('close connection');
-                }
-            });
+                    this.ws.onclose = () => {
+                        this.connecting = false;
+                        this.inGame = false;
+                        // console.log('close connection');
+                    };
+                });
         },
         start() {
-            let msg = {action: 1, pid: this.pid}
+            let msg = { action: 1, pid: this.pid };
             this.ws.send(JSON.stringify(msg));
-            this.ws.onmessage = event => {
+            this.ws.onmessage = (event) => {
                 if (!event.data) {
                     return;
                 }
-                
+
                 let info = JSON.parse(event.data);
                 let action = info.action;
                 let data = info.data;
                 console.table(info);
 
                 switch (action) {
-                    case 1: // 玩家進房                       
+                    case 1: // 玩家進房
                         this.enterGame(data);
                         break;
                     case 2: // 更新玩家資訊
@@ -95,124 +111,122 @@ export default {
                     default:
                     // TODO
                 }
-            }
+            };
         },
         enterGame(data) {
             this.inGame = true;
             this.mySeat = data.s;
-            
-            // document.getElementById('mySeat').innerHTML = `My Seat : ${data.s}`;
-            // let rid = document.getElementById('roundID');
-            // rid.innerHTML = `局號 : [${data.r}]`;
-            // document.getElementById('hidden_RID').value = data.r;
+            this.rid = data.r;
         },
         updateInfo(data) {
             this.playersHandCardCount = {};
             let players = data.p;
             for (let seat in players) {
-                this.playersHandCardCount[seat] = 13;
-            }            
+                let tmpStack = [];
+                for (let index = 0; index < 13; index++) {
+                    tmpStack[seat][index] = { index: 0, num: "pocker-back" };
+                }
+                this.$store.commit("initPlayerStackMap", {
+                    key: seat,
+                    value: tmpStack,
+                });
+            }
         },
         deal(data) {
             let handCards = data.handCards;
-            this.cardsMap = data.cardIndexMap
+            this.cardsMap = data.cardIndexMap;
             if (!handCards || handCards.length === 0) {
                 return;
-            }            
-            this.$store.commit('init', handCards.map((card, index) => { return {index: index, num: this.parseCard(card), isSelected: false}})); 
-            // console.table(this.cardList);  
+            }
+            this.$store.commit(
+                "init",
+                handCards.map((card, index) => {
+                    return {
+                        index: index,
+                        num: this.parseCard(card),
+                        isSelected: false,
+                    };
+                })
+            );
         },
         processPlay(data) {
             if (data.err) {
                 console.log(data.err);
-                // playFail();
+                this.playFail();
                 return;
             }
-            let seat = data.s;            
+            let seat = data.s;
             let playCards = data.c;
-            // playersHandCardCount[seat] -= playCards.length;
-            // console.log('playersHandCardCount', playersHandCardCount);
-            // console.log('this.cardsMap', this.cardsMap);
-            playCards.forEach(card => {
-                let c = this.cardsMap[`${card.suit}-${card.point}`]
-                this.usedCards[c] = true;
+            this.$store.commit("initPlayerStackMap", {
+                key: seat,
+                value: playCards.length,
             });
 
-            let current = playCards.map((card, index) => {return {index: index, num: this.parseCard(card), isSelected:false}});
-            // let temp = this.cardList.filter(card => this.selectedList.indexOf(card.index) > -1);
-            // console.table(temp);
-            this.$store.commit('replace', current);
-            if (seat === this.mySeat && playCards) {                                
-                this.$store.commit('delete', this.currentCard);            
+            let current = playCards.map((card, index) => {
+                return {
+                    index: index,
+                    num: this.parseCard(card),
+                    isSelected: false,
+                };
+            });
+            this.$store.commit("replace", current);
+            if (seat === this.mySeat && playCards) {
+                playCards.forEach((card) => {
+                    let c = this.cardsMap[`${card.suit}-${card.point}`];
+                    this.usedCards[c] = true;
+                });
+                this.$store.commit("delete", this.currentCard);
                 this.selectedList = [];
                 this.disabled = true;
-                this.$store.commit('setLeader', false);
-                this.$store.commit('setMyTurn', false);
+                this.$store.commit("setLeader", false);
+                this.$store.commit("setMyTurn", false);
             }
         },
         play(selectedCard) {
             // console.table(selectedCard);
-            selectedCard.sort((a,b) => a - b);
-            this.ws.send(JSON.stringify({action: 2, pid: this.pid, cards: selectedCard}));
-            this.$store.commit('setMyTurn', false);
+            selectedCard.sort((a, b) => a - b);
+            this.ws.send(
+                JSON.stringify({
+                    action: 2,
+                    pid: this.pid,
+                    cards: selectedCard,
+                })
+            );
+            this.$store.commit("setMyTurn", false);
         },
         processPass(data) {
             if (data.s === this.mySeat) {
-                this.$store.commit('setMyTurn', false);
+                this.$store.commit("setMyTurn", false);
             }
         },
-        pass() {                        
-            this.ws.send(JSON.stringify({action: 3, pid: this.pid}));
-            this.$store.commit('setMyTurn', false);
+        pass() {
+            this.ws.send(JSON.stringify({ action: 3, pid: this.pid }));
+            this.$store.commit("setMyTurn", false);
         },
         parseCard(card) {
-            return (card.point - 1) + (card.suit - 1) * 13;
-        },
-        disable(disabled) {
-            this.disabled = disabled;
+            return card.point - 1 + (card.suit - 1) * 13;
         },
         turn(data) {
+            this.$store.commit("setTurnSeat", data.ts);
             if (data.ts === this.mySeat) {
-                this.$store.commit('setMyTurn', true);
+                this.$store.commit("setMyTurn", true);
                 if (data.l) {
-                    this.$store.commit('replace', []);   
+                    this.$store.commit("replace", []);
                 }
-                // this.$store.commit('clear');
-                // this.$store.commit('clearIndexList');
-                this.$store.commit('setLeader', data.l);
+                this.$store.commit("setLeader", data.l);
             }
         },
         playFail() {
-            // alert('playFail');
-            this.$store.commit('clear');
-            this.$store.commit('setMyTurn', true);
+            this.$store.commit("clear");
+            this.$store.commit("setMyTurn", true);
         },
-        // sort (a, b) {
-        //     let symbolA = a % 13;
-        //     let suitA = Math.floor(a / 13);
-        //     let symbolB = b % 13;
-        //     let suitB = Math.floor(b / 13);            
-        //     let suitRank = [0, 3, 2, 1];
-        //     let symbolRank = [11, 12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        //     if (symbolA === symbolB) {
-        //         return suitRank[suitA] - suitRank[suitB] < 0 ? -1 : 1;
-        //     }
-        //     return symbolRank[symbolA] - symbolRank[symbolB] < 0 ? -1 : 1;
-        // },
-        // shuffle (cards) {
-        //     for (var i = 0; i < cards.length; i++) {
-        //         let index = Math.floor(Math.random() * 51);
-        //         [cards[i], cards[index]] = [cards[index], cards[i]];
-        //     }
-        //     return cards
-        // }
-    }
-}
+    },
+};
 </script>
 
 <style>
 .table {
-    position:relative;
+    position: relative;
     height: 98%;
     background-color: rgb(223, 142, 142);
     background-repeat: no-repeat;

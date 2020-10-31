@@ -1,23 +1,35 @@
 <template>
-    <div class="n_card">
-        <img alt="Card" class="card_img" :src='`${ require("../assets/pocker/" + num + ".jpg")}`'>
+    <div :class="dType">
+        <img alt="Card" :class="type" :src='`${ require("../assets/pocker/" + num + ".jpg")}`'>
     </div>
 </template>
 
 <script>
 export default {
     name: 'NormalCard',
-    props: ['num']
+    props: ['num', 'dType', 'type']
 }
 </script>
 
 <style>
-.n_card {
+.div_card {
     display: inline-block;
     margin: 0 -2% 0 -2%;
+    width: 60px;
 }
 .card_img {
-    width: 100px;
-    height: 130px;
+    width: 80px;
+    height: 100px;
+}
+
+.div_back {
+    display: inline-block;
+    margin: 0 -2% 0 -2%;
+    width: 30px;
+}
+
+.back {
+    width: 60px;
+    height: 90px;    
 }
 </style>
