@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- <button @click="testProcessPlay()">TT</button> -->
         <button v-if="!inGame" :disabled="connecting" @click="conn()">Connect</button>
     </div>
     <div class="table" :style="{ backgroundImage: `url(${backgroundImage})`}" v-if="inGame">      
@@ -29,6 +30,8 @@ export default {
             rid: 0,
             mySeat: 0,
             seatMap: {},
+            // inGame: true,
+            // connecting: true,
             inGame: false,
             connecting: false,
             cardsMap: {},
@@ -121,19 +124,18 @@ export default {
         updateInfo(data) {
             this.playersHandCardCount = {};
             let players = data.p;
+            let tmpStack = {};
             for (let seat in players) {
-                let tmpStack = [];
-                for (let index = 0; index < 13; index++) {
-                    tmpStack[index] = { index: 0, num: "pocker-back" };
+                if(seat === this.mySeat) {
+                    continue;
                 }
-                console.log(tmpStack);
-                this.$store.commit("initPlayerStackMap", {
-                    key: seat,
-                    value: tmpStack,
-                });
+                tmpStack[seat] = [];
+                for (let index = 0; index < 13; index++) {
+                     tmpStack[seat][index] = { index: 0, num: "pocker-back" };
+                }                
             }
-
-            console.table(this.playerStackMap);
+            this.$store.commit("initPlayerStackMap", tmpStack);
+            // console.table(this.playerStackMap);
         },
         deal(data) {
             let handCards = data.handCards;
@@ -152,6 +154,13 @@ export default {
                 })
             );
         },
+        testProcessPlay() {
+            this.$store.commit("updatePlayerStackMap", {
+                key: 1,
+                count: 1,
+            });
+            console.table(this.playerStackMap[1]);
+        },
         processPlay(data) {
             if (data.err) {
                 console.log(data.err);
@@ -160,7 +169,7 @@ export default {
             }
             let seat = data.s;
             let playCards = data.c;
-            this.$store.commit("initPlayerStackMap", {
+            this.$store.commit("updatePlayerStackMap", {
                 key: seat,
                 value: playCards.length,
             });

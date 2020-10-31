@@ -41,9 +41,8 @@ export default createStore({
     }
   },
   mutations: {
-    initPlayerStackMap(state, payload) {
-      console.log('payload', payload)
-      state.playerStackMap[payload.key] = payload
+    initPlayerStackMap(state, payload) {      
+      state.playerStackMap = payload
     },
     updatePlayerStackMap(state, payload) {
       state.playerStackMap[payload.key].splice(0, payload.count);
@@ -74,7 +73,7 @@ export default createStore({
     },
     delete(state, payload) {
       let indexList = payload.map(card => card.num);
-      console.table(indexList);
+      // console.table(indexList);
       state.cardList = state.cardList.filter(card => indexList.indexOf(card.num) < 0);
     },
     selected(state, payload) {

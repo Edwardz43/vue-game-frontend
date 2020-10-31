@@ -59,7 +59,7 @@ export default {
     },
     methods: {
         play() {
-            console.log("this.selectedIndexList", this.selectedIndexList);
+            // console.log("this.selectedIndexList", this.selectedIndexList);
             this.$emit("play", this.selectedIndexList);
             this.$store.commit("clearIndexList");
             this.disabled = true;

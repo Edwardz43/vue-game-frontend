@@ -1,11 +1,11 @@
 <template>
     <div class="player" :class="type">
-        <div class="title" v-if="remain_cards.length > 0">
+        <div class="title">
             {{ title }}
         </div>
         <div class="player_cards">
             <NormalCard
-                v-for="card in remain_cards"
+                v-for="card in info"
                 :key="card.index"
                 :num="card.num"
                 :dType="'div_back'"
@@ -20,29 +20,13 @@ import NormalCard from "./NormalCard.vue";
 
 export default {
     name: "PlayerInfo",
-    props: ["title", "type"],
+    props: ["info","title", "type"],
     components: {
         NormalCard,
     },
-    data() {
-        return {
-            remain_cards: [
-                // { index: 0, num: "pocker-back" },
-                // { index: 1, num: "pocker-back" },
-                // { index: 2, num: "pocker-back" },
-                // { index: 3, num: "pocker-back" },
-                // { index: 4, num: "pocker-back" },
-                // { index: 5, num: "pocker-back" },
-                // { index: 6, num: "pocker-back" },
-                // { index: 7, num: "pocker-back" },
-                // { index: 8, num: "pocker-back" },
-                // { index: 9, num: "pocker-back" },
-                // { index: 10, num: "pocker-back" },
-                // { index: 11, num: "pocker-back" },
-                // { index: 12, num: "pocker-back" },
-            ],
-        };
-    },
+    mounted() {
+        // console.table(this.info);
+    }
 };
 </script>
 
