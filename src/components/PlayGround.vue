@@ -6,7 +6,7 @@
                     :info="this.seatN"
                     :title="'N'"
                     :type="'top'"
-                    :class="{ myTurn: turnSeat === 'n' }"
+                    :class="{ myTurn: turnSeat === this.seatMap['N'] }"
                 />
             </div>
         </div>
@@ -16,7 +16,7 @@
                     :info="this.seatW"
                     :title="'W'"
                     :type="'left'"
-                    :class="{ myTurn: turnSeat === 'e' }"
+                    :class="{ myTurn: turnSeat === this.seatMap['W'] }"
                 />
             </div>
             <div class="col-md-4 offset-md-4" v-if="this.seatE.length > 0">
@@ -24,7 +24,7 @@
                     :info="this.seatE"
                     :title="'E'"
                     :type="'right'"
-                    :class="{ myTurn: turnSeat === 'w' }"
+                    :class="{ myTurn: turnSeat === this.seatMap['E'] }"
                 />
             </div>
         </div>
@@ -91,7 +91,7 @@ export default {
         // tmp["2"] = cardList2;
         // this.$store.commit("initPlayerStackMap", tmp);
         // // tmp["4"] = cardList;
-        // console.log(this.playerStackMap);
+        console.table(this.playerStackMap);
         this.processSeatInfo();
     },
     data() {
@@ -99,11 +99,14 @@ export default {
             seatN:[],
             seatW:[],
             seatE:[],
+            seatMap: {},
         }
     },
     methods: {
         processSeatInfo () {
-            let players = Object.keys(this.playerStackMap);                        
+            let players = Object.keys(this.playerStackMap);
+            console.log(this.playerStackMap);
+            console.log('players', players)                        
             
             switch (players.length) {                
                 case 1:
@@ -112,37 +115,55 @@ export default {
                 case 2:
                     if(this.compareArray(players, ["1", "2"])) {
                         this.seatW = this.playerStackMap[1];
+                        this.seatMap['W'] = 1;
                         this.seatE = this.playerStackMap[2];
+                        this.seatMap['E'] = 2;
                     }
                     if(this.compareArray(players, ["2", "3"])) {
                         this.seatW = this.playerStackMap[2];
+                        this.seatMap['W'] = 2;
                         this.seatE = this.playerStackMap[3];
+                        this.seatMap['E'] = 3;
                     }
                     if(this.compareArray(players, ["1", "3"])) {
-                        this.seatW = this.playerStackMap[1];
-                        this.seatE = this.playerStackMap[3];
+                        this.seatW = this.playerStackMap[3];
+                        this.seatMap['W'] = 3;
+                        this.seatE = this.playerStackMap[1];
+                        this.seatMap['E'] = 1;
                     }
                     break;
                 case 3:
                     if(this.compareArray(players, ["1", "2", "3"])) {
                         this.seatW = this.playerStackMap[1];
+                        this.seatMap['W'] = 1;
                         this.seatN = this.playerStackMap[2];
+                        this.seatMap['N'] = 2;
                         this.seatE = this.playerStackMap[3];
+                        this.seatMap['E'] = 3;
                     }
                     if(this.compareArray(players, ["1", "2", "4"])) {
                         this.seatW = this.playerStackMap[4];
                         this.seatN = this.playerStackMap[1];
                         this.seatE = this.playerStackMap[2];
+                        this.seatMap['W'] = 4;
+                        this.seatMap['N'] = 1;
+                        this.seatMap['E'] = 2;
                     }
                     if(this.compareArray(players, ["1", "3", "4"])) {
                         this.seatW = this.playerStackMap[3];
                         this.seatN = this.playerStackMap[4];
                         this.seatE = this.playerStackMap[1];
+                        this.seatMap['W'] = 3;
+                        this.seatMap['N'] = 4;
+                        this.seatMap['E'] = 1;
                     }
                     if(this.compareArray(players, ["2", "3", "4"])) {
                         this.seatW = this.playerStackMap[2];
                         this.seatN = this.playerStackMap[3];
                         this.seatE = this.playerStackMap[4];
+                        this.seatMap['W'] = 2;
+                        this.seatMap['N'] = 3;
+                        this.seatMap['E'] = 4;
                     }                    
                     break;
                 default:                        

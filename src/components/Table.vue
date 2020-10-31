@@ -5,7 +5,7 @@
     </div>
     <div class="table" :style="{ backgroundImage: `url(${backgroundImage})`}" v-if="inGame">      
         <RoundInfo :rid="rid" />
-        <PlayGround/>
+        <PlayGround v-if="Object.keys(playerStackMap).length > 0"/>
         <Seat :cardList="cardList" @play="play" @pass="pass" />
     </div>
 </template>
@@ -29,7 +29,6 @@ export default {
             pid: 0,
             rid: 0,
             mySeat: 0,
-            seatMap: {},
             // inGame: true,
             // connecting: true,
             inGame: false,
@@ -120,13 +119,15 @@ export default {
             this.inGame = true;
             this.mySeat = data.s;
             this.rid = data.r;
+            console.log('mySeat', this.mySeat)
         },
         updateInfo(data) {
             this.playersHandCardCount = {};
             let players = data.p;
             let tmpStack = {};
             for (let seat in players) {
-                if(seat === this.mySeat) {
+                if(seat.toString() === this.mySeat.toString()) {
+                    console.log('mySeat', this.mySeat)
                     continue;
                 }
                 tmpStack[seat] = [];
@@ -169,11 +170,6 @@ export default {
             }
             let seat = data.s;
             let playCards = data.c;
-            this.$store.commit("updatePlayerStackMap", {
-                key: seat,
-                value: playCards.length,
-            });
-
             let current = playCards.map((card, index) => {
                 return {
                     index: index,
@@ -192,6 +188,11 @@ export default {
                 this.disabled = true;
                 this.$store.commit("setLeader", false);
                 this.$store.commit("setMyTurn", false);
+            } else {
+                  this.$store.commit("updatePlayerStackMap", {
+                    key: seat,
+                    count: playCards.length,
+                });
             }
         },
         play(selectedCard) {
