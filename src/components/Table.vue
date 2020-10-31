@@ -17,7 +17,7 @@ import { mapState } from "vuex";
 
 export default {
     name: "Table",
-    computed: mapState(["cardList", "currentCard"]),
+    computed: mapState(["cardList", "currentCard", "playerStackMap"]),
     components: {
         RoundInfo,
         PlayGround,
@@ -78,7 +78,7 @@ export default {
                 let info = JSON.parse(event.data);
                 let action = info.action;
                 let data = info.data;
-                console.table(info);
+                console.log(info);
 
                 switch (action) {
                     case 1: // 玩家進房
@@ -124,13 +124,16 @@ export default {
             for (let seat in players) {
                 let tmpStack = [];
                 for (let index = 0; index < 13; index++) {
-                    tmpStack[seat][index] = { index: 0, num: "pocker-back" };
+                    tmpStack[index] = { index: 0, num: "pocker-back" };
                 }
+                console.log(tmpStack);
                 this.$store.commit("initPlayerStackMap", {
                     key: seat,
                     value: tmpStack,
                 });
             }
+
+            console.table(this.playerStackMap);
         },
         deal(data) {
             let handCards = data.handCards;

@@ -11,9 +11,9 @@
             </button>
             <button
                 class="player_btn"
-                :class="{ dis: myTurn && isLeader }"
+                :class="{ dis: !myTurn || isLeader }"
                 @click="pass()"
-                :disabled="myTurn && isLeader"
+                :disabled="!myTurn || isLeader"
             >
                 Pass
             </button>

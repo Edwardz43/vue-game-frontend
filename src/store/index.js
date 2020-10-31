@@ -42,7 +42,8 @@ export default createStore({
   },
   mutations: {
     initPlayerStackMap(state, payload) {
-      state.playerStackMap[payload.key] = payload.value;
+      console.log('payload', payload)
+      state.playerStackMap[payload.key] = payload
     },
     updatePlayerStackMap(state, payload) {
       state.playerStackMap[payload.key].splice(0, payload.count);
