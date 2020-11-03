@@ -14,17 +14,17 @@
 
 <script>
 export default {
-    name: "RoundInfo",
-    props: ["rid"],
-    methods: {
-        copy() {
-            let copyText = document.getElementById("h_rid");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-            document.execCommand("copy");
-            alert(`Round ID ${this.rid} copied`);
-        },
-    },
+	name: 'RoundInfo',
+	props: ['rid'],
+	methods: {
+		copy() {
+			let copyText = document.getElementById('h_rid');
+			copyText.select();
+			copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+			document.execCommand('copy');
+			alert(`Round ID ${this.rid} copied`);
+		},
+	},
 };
 </script>
 
@@ -50,7 +50,7 @@ export default {
 
 @keyframes floating {
     0% {
-        left: 0px;
+        left: 0;
     }
     100% {
         left: 3px;

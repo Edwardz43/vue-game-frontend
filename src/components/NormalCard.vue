@@ -10,8 +10,8 @@
 
 <script>
 export default {
-    name: "NormalCard",
-    props: ["num", "dType", "type"],
+	name: 'NormalCard',
+	props: ['num', 'dType', 'type'],
 };
 </script>
 

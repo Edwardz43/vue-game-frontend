@@ -1,4 +1,4 @@
-# pocker-game
+# poker-game
 
 ## Project setup
 ```

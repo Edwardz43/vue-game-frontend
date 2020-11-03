@@ -16,17 +16,17 @@
 </template>
 
 <script>
-import NormalCard from "./NormalCard.vue";
+import NormalCard from './NormalCard.vue';
 
 export default {
-    name: "PlayerInfo",
-    props: ["info", "title", "type"],
-    components: {
-        NormalCard,
-    },
-    updated() {
-        console.log("UPDATE", this.info);
-    },
+	name: 'PlayerInfo',
+	props: ['info', 'title', 'type'],
+	components: {
+		NormalCard,
+	},
+	updated() {
+		console.log('UPDATE', this.info);
+	},
 };
 </script>
 

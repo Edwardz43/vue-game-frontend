@@ -49,23 +49,23 @@
 </template>
 
 <script>
-import Card from "./NormalCard.vue";
-import PlayerInfo from "./PlayerInfo.vue";
-import { mapState } from "vuex";
+import Card from './NormalCard.vue';
+import PlayerInfo from './PlayerInfo.vue';
+import { mapState } from 'vuex';
 
 export default {
-    name: "PlayGround",
-    computed: mapState([
-        "turnSeat",
-        "currentCard",
-        "playerStackMap",
-        "seatMap",
-        "flipSeatMap",
-    ]),
-    components: {
-        Card,
-        PlayerInfo,
-    },
+	name: 'PlayGround',
+	computed: mapState([
+		'turnSeat',
+		'currentCard',
+		'playerStackMap',
+		'seatMap',
+		'flipSeatMap',
+	]),
+	components: {
+		Card,
+		PlayerInfo,
+	},
 };
 </script>
 

@@ -29,20 +29,20 @@
 </template>
 <script>
 export default {
-    name: "App",
-    data() {
-        return {
-            active: 0,
-        };
-    },
-    methods: {
-        table() {
-            this.active = 1;
-        },
-        history() {
-            this.active = 2;
-        },
-    },
+	name: 'App',
+	data() {
+		return {
+			active: 0,
+		};
+	},
+	methods: {
+		table() {
+			this.active = 1;
+		},
+		history() {
+			this.active = 2;
+		},
+	},
 };
 </script>
 <style>
