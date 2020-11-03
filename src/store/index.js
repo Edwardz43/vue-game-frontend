@@ -4,51 +4,53 @@ export default createStore({
   state() {
     return {
       turnSeat: "",
-      cardList: [
-        // { index: 0, num: 2, isSelected: false },
-        // { index: 1, num: 2, isSelected: false },
-        // { index: 2, num: 2, isSelected: false },
-        // { index: 3, num: 2, isSelected: false },
-        // { index: 4, num: 2, isSelected: false },
-        // { index: 5, num: 2, isSelected: false },
-        // { index: 6, num: 2, isSelected: false },
-        // { index: 7, num: 2, isSelected: false },
-        // { index: 8, num: 2, isSelected: false },
-        // { index: 9, num: 2, isSelected: false },
-        // { index: 10, num: 2, isSelected: false },
-        // { index: 11, num: 2, isSelected: false },
-        // { index: 12, num: 2, isSelected: false },
-      ],
+      cardList: [],
+      seatMap: {},
+      flipSeatMap: {},
       playerStackMap: {},
       selectedIndexList: [],
-      currentCard: [
-        // { index: 0, num: 2, isSelected: false },
-        // { index: 1, num: 2, isSelected: false },
-        // { index: 2, num: 2, isSelected: false },
-        // { index: 3, num: 2, isSelected: false },
-        // { index: 4, num: 2, isSelected: false },
-        // { index: 5, num: 2, isSelected: false },
-        // { index: 6, num: 2, isSelected: false },
-        // { index: 7, num: 2, isSelected: false },
-        // { index: 8, num: 2, isSelected: false },
-        // { index: 9, num: 2, isSelected: false },
-        // { index: 10, num: 2, isSelected: false },
-        // { index: 11, num: 2, isSelected: false },
-        // { index: 12, num: 2, isSelected: false },
-      ],
+      currentCard: [],
       myTurn: false,
       isLeader: false,
+      ws: {},
     }
   },
   mutations: {
-    initPlayerStackMap(state, payload) {      
+    conn(state, payload) {
+      state.ws = payload;
+    },
+    disconn(state) {
+      if (state.ws.close) {
+        state.ws.close();
+      }
+    },
+    init(state) {
+      state.turnSeat = "";
+      state.cardList = [];
+      state.playerStackMap = {};
+      state.seatMap = {};
+      state.selectedIndexList = [];
+      state.currentCard = [];
+      state.myTurn = false;
+      state.isLeader = false;
+    },
+    initPlayerStackMap(state, payload) {
       state.playerStackMap = payload
     },
     updatePlayerStackMap(state, payload) {
       state.playerStackMap[payload.key].splice(0, payload.count);
     },
     showPlayerStackMap(state, payload) {
-      state.playerStackMap[payload.key] = payload.value;
+      state.playerStackMap = payload;
+      console.log('state.playerStackMap', state.playerStackMap);
+    },
+    setSeatMap(state, payload) {
+      state.seatMap = payload;
+      let ret = {};
+      Object.keys(payload).forEach(key => {
+        ret[payload[key]] = key;
+      });
+      state.flipSeatMap = ret;
     },
     setTurnSeat(state, payload) {
       state.turnSeat = payload;
@@ -59,7 +61,7 @@ export default createStore({
     setLeader(state, payload) {
       state.isLeader = payload;
     },
-    init(state, payload) {
+    initCardList(state, payload) {
       state.cardList = payload;
     },
     add(state, payload) {
@@ -73,7 +75,6 @@ export default createStore({
     },
     delete(state, payload) {
       let indexList = payload.map(card => card.num);
-      // console.table(indexList);
       state.cardList = state.cardList.filter(card => indexList.indexOf(card.num) < 0);
     },
     selected(state, payload) {

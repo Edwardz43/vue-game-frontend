@@ -7,6 +7,7 @@
         title="Click to copy round ID"
     >
         Round {{ rid }}
+        <div class="arrow">👈</div>
         <textarea id="h_rid" cols="30" rows="10" :value="rid"></textarea>
     </div>
 </template>
@@ -17,12 +18,9 @@ export default {
     props: ["rid"],
     methods: {
         copy() {
-            /* Get the text field */
-            var copyText = document.getElementById("h_rid");
-            /* Select the text field */
+            let copyText = document.getElementById("h_rid");
             copyText.select();
             copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-            /* Copy the text inside the text field */
             document.execCommand("copy");
             alert(`Round ID ${this.rid} copied`);
         },
@@ -40,5 +38,22 @@ export default {
 #h_rid {
     position: fixed;
     top: -1000%;
+}
+
+.arrow {
+    position: relative;
+    display: inline-block;
+    animation-name: floating;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes floating {
+    0% {
+        left: 0px;
+    }
+    100% {
+        left: 3px;
+    }
 }
 </style>

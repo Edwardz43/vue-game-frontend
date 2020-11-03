@@ -5,7 +5,7 @@
             class="static"
             :class="{ selected: isSelected }"
             @click="click()"
-            :src="`${require('../assets/pocker/' + num + '.jpg')}`"
+            :src="`https://raw.githubusercontent.com/makotohsu/MyTestGameAssetPicture/main/pocker/${num}.jpg`"
         />
     </div>
 </template>
@@ -27,7 +27,7 @@ export default {
 
 <style>
 .pocker {
-    width: 56px;
+    width: 60px;
     height: 100px;
     display: inline-block;
 }

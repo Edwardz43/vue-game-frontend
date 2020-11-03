@@ -1,9 +1,9 @@
 <template>
     <div class="seat" :class="{ myTurn: myTurn }">
-        <div class="seat-label">
+        <div class="seat-label" v-if="myTurn">
             <button
                 class="player_btn"
-                :class="{ dis: disabled }"
+                :class="{ dis: disabled}"
                 @click="play()"
                 :disabled="disabled"
             >
@@ -67,6 +67,7 @@ export default {
         pass() {
             this.$emit("pass");
             this.$store.commit("clearIndexList");
+            this.$store.commit("clear");
             this.disabled = true;
         },
         add({ index }) {
@@ -84,6 +85,7 @@ export default {
         clear() {
             this.$store.commit("clearIndexList");
             this.$store.commit("clear");
+            this.disabled = true;
             // this.$emit('disable', true);
         },
     },
@@ -95,7 +97,7 @@ export default {
     text-align: center;
     position: relative;
     top: 5%;
-    height: 30%;
+    height: 32%;
     overflow-y: hidden;
 }
 
@@ -124,7 +126,7 @@ export default {
 }
 
 .stack {
-    margin-top: 1%;
+    margin-top: 3%;
 }
 
 .myTurn {

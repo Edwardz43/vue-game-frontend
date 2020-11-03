@@ -4,27 +4,18 @@
             <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
                     <router-link
-                        :click="home"
-                        class="nav-link"
-                        :class="{ active: active === 1 }"
-                        to="/"
-                        >Home</router-link
-                    >
-                </li>
-                <li class="nav-item">
-                    <router-link
                         :click="table"
                         class="nav-link"
-                        :class="{ active: active === 2 }"
+                        :class="{ active: active === 1 }"
                         to="/table"
-                        >Table</router-link
+                        >Game Table</router-link
                     >
                 </li>
                 <li class="nav-item">
                     <router-link
                         :click="history"
                         class="nav-link"
-                        :class="{ active: active === 3 }"
+                        :class="{ active: active === 2 }"
                         to="/history"
                         >History</router-link
                     >
@@ -45,14 +36,11 @@ export default {
         };
     },
     methods: {
-        home() {
+        table() {
             this.active = 1;
         },
-        table() {
-            this.active = 2;
-        },
         history() {
-            this.active = 3;
+            this.active = 2;
         },
     },
 };
@@ -88,6 +76,6 @@ body {
     margin: 0;
 }
 #card_view {
-    height: 645px;
+    height: 850px;
 }
 </style>

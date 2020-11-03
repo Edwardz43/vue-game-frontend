@@ -20,13 +20,13 @@ import NormalCard from "./NormalCard.vue";
 
 export default {
     name: "PlayerInfo",
-    props: ["info","title", "type"],
+    props: ["info", "title", "type"],
     components: {
         NormalCard,
     },
-    mounted() {
-        // console.table(this.info);
-    }
+    updated() {
+        console.log("UPDATE", this.info);
+    },
 };
 </script>
 
@@ -44,6 +44,8 @@ export default {
 
 .player_cards {
     /* overflow-x: hidden; */
+    position: relative;
+    top: 40%;
 }
 
 .top {
@@ -51,17 +53,17 @@ export default {
     display: inline-block;
     top: 1%;
     padding-bottom: 3%;
-    /* left: 7%; */
-    /* width: 40%; */
 }
 
 .right {
     position: relative;
     padding-bottom: 10%;
+    /* top: 40%; */
 }
 
 .left {
     position: relative;
     padding-bottom: 10%;
+    /* top: 40%; */
 }
 </style>
